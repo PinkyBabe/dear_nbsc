@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Letter Before I Go — NBSC</title>
+<meta name="description" content="A farewell letter to Northern Bukidnon State College, from a proud graduate.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,500;1,500;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --white:#ffffff;
+    --paper:#f8faff;
+    --paper-edge:#eef3fb;
+    --blue-ink:#132a4d;
+    --blue-deep:#0e2038;
+    --blue-mid:#3a68a0;
+    --blue-soft:#aecbec;
+    --blue-mist:#dbe7f7;
+    --yellow:#eec94d;
+    --yellow-deep:#d9ab1f;
+
+    --font-display:'Playfair Display', serif;
+    --font-script:'Cormorant Garamond', serif;
+    --font-body:'Lora', serif;
+    --font-ui:'Inter', sans-serif;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, var(--blue-mist), transparent 60%),
+      radial-gradient(1000px 700px at 100% 10%, #eef4ff, transparent 55%),
+      var(--paper);
+    color:var(--blue-ink);
+    font-family:var(--font-body);
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- Leaf canvas, sits behind everything, always on ---------- */
+  #leafCanvas{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:5;
+  }
+
+  /* ---------- Page content ---------- */
+  main{
+    position:relative;
+    z-index:10;
+    max-width:760px;
+    margin:0 auto;
+    padding:90px 24px 140px;
+  }
+
+  .masthead{
+    text-align:center;
+    margin-bottom:56px;
+  }
+  .masthead .eyebrow{
+    font-family:var(--font-ui);
+    font-size:0.7rem;
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    color:var(--blue-mid);
+    margin-bottom:10px;
+  }
+  .masthead h1{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(2rem, 5vw, 2.9rem);
+    margin:0 0 10px;
+    color:var(--blue-deep);
+  }
+  .masthead .rule{
+    width:64px;
+    height:2px;
+    margin:18px auto 0;
+    background:linear-gradient(90deg, transparent, var(--yellow), transparent);
+  }
+
+  .letter{
+    position:relative;
+    background:var(--white);
+    border-radius:6px;
+    padding:clamp(30px, 6vw, 64px);
+    box-shadow:
+      0 1px 0 rgba(19,42,77,0.04),
+      0 30px 60px -30px rgba(19,42,77,0.22),
+      0 8px 20px -10px rgba(19,42,77,0.10);
+    border:1px solid var(--paper-edge);
+  }
+  .letter::before{
+    /* torn / deckled top edge, drawn with a repeating gradient */
+    content:"";
+    position:absolute;
+    top:-1px; left:0; right:0;
+    height:10px;
+    background:
+      linear-gradient(135deg, var(--paper) 50%, transparent 50%) 0 0/14px 14px repeat-x,
+      linear-gradient(-135deg, var(--paper) 50%, transparent 50%) 0 0/14px 14px repeat-x;
+    background-color:var(--white);
+  }
+  .ribbon{
+    position:absolute;
+    top:-14px;
+    right:44px;
+    width:34px;
+    height:70px;
+    background:linear-gradient(180deg, var(--blue-mid), var(--blue-deep));
+    clip-path:polygon(0 0,100% 0,100% 100%,50% 78%,0 100%);
+    box-shadow:0 6px 14px rgba(14,32,56,0.25);
+  }
+
+  .salutation{
+    font-family:var(--font-display);
+    font-style:italic;
+    font-weight:500;
+    font-size:1.35rem;
+    color:var(--blue-mid);
+    margin:0 0 28px;
+  }
+
+  .letter p{
+    font-size:1.06rem;
+    line-height:1.85;
+    color:#243b5c;
+    margin:0 0 22px;
+    opacity:0;
+    transform:translateY(14px);
+    transition:opacity .8s ease, transform .8s ease;
+  }
+  .letter p.in-view{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  .pull-line{
+    display:inline-block;
+    font-family:var(--font-script);
+    font-style:italic;
+    font-size:1.18em;
+    color:var(--blue-deep);
+    position:relative;
+    padding-bottom:2px;
+  }
+  .pull-line::after{
+    content:"";
+    position:absolute;
+    left:0; bottom:-2px;
+    height:2px;
+    width:0%;
+    background:var(--yellow-deep);
+    transition:width 1.1s ease .15s;
+  }
+  .letter p.in-view .pull-line::after{ width:100%; }
+
+  .sign-off{
+    margin-top:46px;
+    padding-top:28px;
+    border-top:1px dashed var(--blue-mist);
+    text-align:right;
+  }
+  .sign-off .valediction{
+    font-family:var(--font-body);
+    font-style:italic;
+    color:#4a638a;
+    margin:0 0 14px;
+  }
+  .signature{
+    font-family:var(--font-script);
+    font-style:italic;
+    font-weight:600;
+    font-size:2.1rem;
+    color:var(--blue-deep);
+    margin:0;
+    letter-spacing:0.01em;
+  }
+  .sign-role{
+    font-family:var(--font-ui);
+    font-size:0.72rem;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--blue-mid);
+    margin-top:6px;
+  }
+
+  footer{
+    position:relative;
+    z-index:10;
+    text-align:center;
+    font-family:var(--font-ui);
+    font-size:0.72rem;
+    letter-spacing:0.1em;
+    color:#7c93b8;
+    padding-bottom:60px;
+  }
+  footer .dot{ color:var(--yellow-deep); margin:0 8px; }
+
+  /* ---------- Music control ---------- */
+  #musicToggle{
+    position:fixed;
+    right:22px;
+    bottom:22px;
+    z-index:60;
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    border:none;
+    cursor:pointer;
+    background:radial-gradient(circle at 35% 30%, #1c3a63, var(--blue-deep) 70%);
+    box-shadow:0 10px 22px rgba(14,32,56,0.35), inset 0 0 0 2px rgba(238,201,77,0.5);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:transform .3s ease;
+  }
+  #musicToggle:hover{ transform:scale(1.06); }
+  #musicToggle svg{ width:22px; height:22px; }
+  #musicToggle.spinning svg{ animation:spin 4.5s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  #musicStatus{
+    position:fixed;
+    right:22px;
+    bottom:86px;
+    z-index:60;
+    font-family:var(--font-ui);
+    font-size:0.65rem;
+    letter-spacing:0.08em;
+    color:var(--blue-mid);
+    background:rgba(255,255,255,0.85);
+    padding:5px 10px;
+    border-radius:20px;
+    box-shadow:0 4px 10px rgba(19,42,77,0.12);
+    opacity:0;
+    transform:translateY(6px);
+    transition:opacity .4s ease, transform .4s ease;
+    pointer-events:none;
+    white-space:nowrap;
+  }
+  #musicStatus.show{ opacity:1; transform:translateY(0); }
+
+  @media (max-width:520px){
+    .ribbon{ right:24px; }
+    .letter{ padding:26px 20px; }
+    .signature{ font-size:1.7rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .letter p{ transition:none; opacity:1; transform:none; }
+    #musicToggle.spinning svg{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Falling leaves, drawn continuously in the background -->
+<canvas id="leafCanvas" aria-hidden="true"></canvas>
+
+<!-- Background music. Source is a Google Drive file the author shared publicly. -->
+<audio id="bgMusic" loop preload="none">
+  <source src="https://drive.google.com/uc?export=download&id=13NuRDHymDCCYFoWaMUivV-6aE6dekcaF" type="audio/mpeg">
+</audio>
+
+<button id="musicToggle" aria-label="Toggle background music" title="Toggle music">
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="10" stroke="#eec94d" stroke-width="1.4"/>
+    <circle cx="12" cy="12" r="3" fill="#eec94d"/>
+  </svg>
+</button>
+<div id="musicStatus">music paused</div>
+
+<main>
+  <div class="masthead">
+    <div class="eyebrow">A Farewell, Written With Gratitude</div>
+    <h1>Dear NBSC,</h1>
+    <div class="rule"></div>
+  </div>
+
+  <article class="letter" id="letterCard">
+    <div class="ribbon" aria-hidden="true"></div>
+
+    <p>As I prepare to conclude my academic journey at Northern Bukidnon State College, I find myself reflecting on the years that have shaped not only my education but also my character. What once began as an unfamiliar environment gradually became a place of learning, growth, and countless unforgettable experiences.</p>
+
+    <p>Throughout my time here, NBSC provided more than academic instruction. It became a foundation where discipline was developed, perspectives were broadened, and meaningful relationships were formed. Every challenge, every success, and every setback contributed to the person I am today. These experiences will remain valuable long after I leave these halls.</p>
+
+    <p>Graduation is often viewed as the completion of a goal. However, I see it as the beginning of another pursuit. While new opportunities now await beyond the campus, I recognize that this transition is not merely a matter of choice but part of the path that destiny unfolds for each of us. There is still much to learn, many places to explore, and many aspirations yet to be realized. As the familiar words of a timeless song suggest, <span class="pull-line">I still haven't found what I'm looking for.</span> To me, those words are not an expression of emptiness but of purpose — a reminder that growth continues beyond every milestone.</p>
+
+    <p>I extend my sincere appreciation to the faculty, staff, and administrators for their commitment to nurturing generations of students. Your guidance has left a lasting impact that reaches far beyond the classroom. To my classmates and friends, thank you for making this journey memorable through shared experiences, collaboration, and unwavering support.</p>
+
+    <p>Although I now move toward new horizons, I will always carry the values and lessons I gained from NBSC. This institution will remain an important part of my story — not as the final destination, but as the place where my pursuit of knowledge, purpose, and personal growth was strengthened.</p>
+
+    <p>Thank you, NBSC, for being the foundation upon which I will continue building my future. While my journey leads me elsewhere, this chapter will always hold a special place in my life.</p>
+
+    <div class="sign-off">
+      <p class="valediction">Respectfully yours,</p>
+      <p class="signature">Jam Piodos</p>
+      <div class="sign-role">A Proud Graduate</div>
+    </div>
+  </article>
+</main>
+
+<footer>
+  Northern Bukidnon State College <span class="dot">•</span> Class Farewell <span class="dot">•</span> Written with gratitude
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ============ Falling leaves canvas ============ */
+  var canvas = document.getElementById('leafCanvas');
+  var ctx = canvas.getContext('2d');
+  var W, H, dpr;
+  var leaves = [];
+  var LEAF_COUNT = reduceMotion ? 10 : 26;
+
+  var palette = [
+    { fill:'#3a68a0', stroke:'#1c3a63' }, // mid blue
+    { fill:'#aecbec', stroke:'#3a68a0' }, // soft blue
+    { fill:'#ffffff', stroke:'#aecbec' }, // white / outline
+    { fill:'#eec94d', stroke:'#d9ab1f' }  // rare yellow accent
+  ];
+
+  function pickColor(){
+    // weight yellow to be rare
+    var r = Math.random();
+    if (r < 0.08) return palette[3];
+    if (r < 0.46) return palette[0];
+    if (r < 0.80) return palette[1];
+    return palette[2];
+  }
+
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function makeLeaf(spawnAtTop){
+    var size = 8 + Math.random()*10;
+    return {
+      x: Math.random()*W,
+      y: spawnAtTop ? -20 - Math.random()*200 : Math.random()*H,
+      size: size,
+      speedY: (reduceMotion ? 0.35 : 0.6) + Math.random()*0.9,
+      speedX: (Math.random()-0.5)*0.6,
+      sway: Math.random()*Math.PI*2,
+      swaySpeed: 0.01 + Math.random()*0.02,
+      swayAmp: 12 + Math.random()*22,
+      rot: Math.random()*Math.PI*2,
+      rotSpeed: (Math.random()-0.5)*0.02,
+      color: pickColor(),
+      opacity: 0.55 + Math.random()*0.4
+    };
+  }
+
+  function initLeaves(){
+    leaves = [];
+    for (var i=0; i<LEAF_COUNT; i++){
+      leaves.push(makeLeaf(false));
+    }
+  }
+
+  function drawLeaf(l){
+    ctx.save();
+    ctx.translate(l.x, l.y);
+    ctx.rotate(l.rot);
+    ctx.globalAlpha = l.opacity;
+    var s = l.size;
+    ctx.beginPath();
+    // simple leaf silhouette: two bezier curves meeting at tip and base
+    ctx.moveTo(0, -s);
+    ctx.bezierCurveTo(s*0.9, -s*0.4, s*0.9, s*0.5, 0, s);
+    ctx.bezierCurveTo(-s*0.9, s*0.5, -s*0.9, -s*0.4, 0, -s);
+    ctx.closePath();
+    ctx.fillStyle = l.color.fill;
+    ctx.fill();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = l.color.stroke;
+    ctx.stroke();
+    // center vein
+    ctx.beginPath();
+    ctx.moveTo(0, -s*0.85);
+    ctx.lineTo(0, s*0.85);
+    ctx.strokeStyle = l.color.stroke;
+    ctx.globalAlpha = l.opacity * 0.6;
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function step(){
+    ctx.clearRect(0,0,W,H);
+    for (var i=0; i<leaves.length; i++){
+      var l = leaves[i];
+      l.sway += l.swaySpeed;
+      l.y += l.speedY;
+      l.x += l.speedX + Math.sin(l.sway)*0.4;
+      l.rot += l.rotSpeed;
+      if (l.y - l.size > H){
+        leaves[i] = makeLeaf(true);
+      }
+      if (l.x < -30) l.x = W+30;
+      if (l.x > W+30) l.x = -30;
+      drawLeaf(l);
+    }
+    requestAnimationFrame(step);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  initLeaves();
+  requestAnimationFrame(step);
+
+  /* click anywhere to release a small burst of extra leaves */
+  document.addEventListener('click', function(e){
+    if (e.target.closest('#musicToggle')) return;
+    var burst = reduceMotion ? 2 : 5;
+    for (var i=0; i<burst; i++){
+      var l = makeLeaf(true);
+      l.x = e.clientX + (Math.random()-0.5)*40;
+      l.y = e.clientY - 10;
+      leaves.push(l);
+    }
+    if (leaves.length > 90) leaves.splice(0, leaves.length - 90);
+  });
+
+  /* ============ Scroll reveal for paragraphs ============ */
+  var paras = document.querySelectorAll('.letter p, .sign-off');
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold:0.2 });
+    paras.forEach(function(p){ io.observe(p); });
+  } else {
+    paras.forEach(function(p){ p.classList.add('in-view'); });
+  }
+
+  /* ============ Music: starts on the first click anywhere on the page ============ */
+  var audio = document.getElementById('bgMusic');
+  var musicToggle = document.getElementById('musicToggle');
+  var musicStatus = document.getElementById('musicStatus');
+  var musicStarted = false;
+
+  function showStatus(text){
+    musicStatus.textContent = text;
+    musicStatus.classList.add('show');
+    clearTimeout(showStatus._t);
+    showStatus._t = setTimeout(function(){
+      musicStatus.classList.remove('show');
+    }, 2200);
+  }
+
+  function playMusic(){
+    audio.volume = 0.55;
+    audio.play().then(function(){
+      musicToggle.classList.add('spinning');
+      showStatus('now playing');
+    }).catch(function(){
+      showStatus('music link unavailable');
+    });
+  }
+
+  document.addEventListener('click', function(){
+    if (!musicStarted){
+      musicStarted = true;
+      playMusic();
+    }
+  }, { once:true });
+
+  musicToggle.addEventListener('click', function(){
+    musicStarted = true;
+    if (audio.paused){
+      playMusic();
+    } else {
+      audio.pause();
+      musicToggle.classList.remove('spinning');
+      showStatus('music paused');
+    }
+  });
+
+  audio.addEventListener('error', function(){
+    showStatus('music link unavailable');
+  });
+
+})();
+</script>
+</body>
+</html>
